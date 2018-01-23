@@ -1,10 +1,19 @@
-#/opt/data:
-#  mount.mounted:
-#    - device: /dev/xvdh
-#    - fstype: ext4
-#    - mkmnt: True
-#    - opts:
-#      - defaults
+/opt/data:
+  file.directory:
+    - user: ubuntu
+    - group: ubuntu
+    - mode: 700
+    - makedirs: True
+  mount.mounted:
+    - device: /dev/xvdh1
+    - fstype: ext4
+    - mkmnt: True
+    - opts:
+      - defaults
+
+daemontools:
+  pkg.installed:
+    - name: daemontools
 
 build-essential:
   pkg.installed:
@@ -25,5 +34,26 @@ extract_digibyte:
     - archive_format: tar
     - user: ubuntu
     - group: ubuntu
-    - if_missing: /home/ubuntu/digibyte
+    - if_missing: /home/ubuntu/digibyte-6.14.2
 
+/home/ubuntu/coind.conf:
+  file.managed:
+    - template: jinja
+    - source: salt://coind/coind.conf
+    - makedirs: False
+    - context:
+        rpcuser: rpcuser
+        rpcpass: supersecret
+        rpcport: 19123
+
+/home/ubuntu/digibyte-6.14.2/run:
+  file.managed:
+    - source: salt://coind/coind.run
+    - makedirs: False
+    - user: ubuntu
+    - group: ubuntu
+    - mode: 755
+
+# TODO
+# Daemontools run will allow us to make sure the "run" service is always running
+# make sure coind is running
