@@ -7,3 +7,5 @@ base:
     - nomp
   'coind':
     - coind
+  'cpuminer':
+    - cpuminer
